@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Integrapp — Gestión para centros terapéuticos</title>
+<meta name="description" content="Empadronamiento, documentación, facturación y cobranzas con obras sociales, en un solo sistema para centros que trabajan bajo la Ley 24.901.">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --indigo:#3B36A8; --indigo-deep:#26215F; --indigo-tint:#E4E1F5;
+    --teal:#17B3A6; --teal-deep:#0E8478;
+    --coral:#FF6B5E; --coral-tint:#FFE2DE;
+    --ink:#1B1A2E; --ink-soft:#514F6B;
+    --paper:#FAF9F6; --paper-alt:#F1EFEA; --line:#DEDBE8;
+    --font-display:'Poppins',sans-serif; --font-body:'Inter',sans-serif;
+  }
+  *{margin:0; padding:0; box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{font-family:var(--font-body); color:var(--ink); background:var(--paper); line-height:1.55;}
+  a{color:inherit; text-decoration:none;}
+  img,svg{display:block;}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 32px;}
+  section{padding:104px 0;}
+  h1,h2,h3{font-family:var(--font-display); font-weight:600; letter-spacing:-0.01em; color:var(--indigo-deep);}
+  .label{font-family:var(--font-body); font-weight:600; font-size:13px; letter-spacing:0.02em;}
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    font-family:var(--font-body); font-weight:600; font-size:15px;
+    padding:13px 26px; border-radius:8px; cursor:pointer; border:none;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover{transform:translateY(-1px);}
+  .btn-primary{background:var(--teal); color:var(--indigo-deep);}
+  .btn-primary:hover{box-shadow:0 8px 20px rgba(23,179,166,0.35);}
+  .btn-ghost{background:transparent; color:var(--indigo); border:1.5px solid var(--indigo);}
+  .btn-ghost.on-dark{color:var(--paper); border-color:rgba(255,255,255,0.4);}
+  .btn-block{width:100%;}
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky; top:0; z-index:50; background:rgba(250,249,246,0.92);
+    backdrop-filter:blur(8px); border-bottom:1px solid transparent;
+    transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  header.scrolled{border-bottom-color:var(--line); box-shadow:0 2px 16px rgba(27,26,46,0.05);}
+  nav{display:flex; align-items:center; justify-content:space-between; padding:18px 0;}
+  .brand{display:flex; align-items:center; gap:10px; margin-right:20px;}
+  .brand .wordmark{font-family:var(--font-display); font-weight:600; font-size:20px; color:var(--indigo);}
+  .nav-links{display:flex; align-items:center; gap:32px;}
+  .nav-links a{font-size:14.5px; font-weight:500; color:var(--ink-soft);}
+  .nav-links a:hover{color:var(--indigo);}
+  .nav-actions{display:flex; align-items:center; gap:16px;}
+  .nav-login{font-family:var(--font-body); font-weight:600; font-size:14.5px; color:var(--indigo); white-space:nowrap;}
+  .nav-login:hover{color:var(--indigo-deep); text-decoration:underline;}
+  .nav-toggle{display:none; background:none; border:none; cursor:pointer; padding:4px; align-items:center; justify-content:center;}
+
+  /* ---------- HERO ---------- */
+  #hero{padding:88px 0 100px;}
+  .hero-grid{display:grid; grid-template-columns:1.05fr 0.95fr; gap:56px; align-items:center;}
+  .hero-copy h1{font-size:46px; line-height:1.14; margin-bottom:22px; max-width:560px;}
+  .hero-copy p{font-size:17.5px; color:var(--ink-soft); max-width:480px; margin-bottom:34px;}
+  .hero-actions{display:flex; gap:14px; flex-wrap:wrap;}
+
+  .mockcard{
+    background:#fff; border-radius:14px; border:1px solid var(--line); overflow:hidden;
+    box-shadow:0 24px 60px rgba(38,33,95,0.14);
+  }
+  .mockcard-head{padding:22px 26px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between;}
+  .mockcard-head .t{font-family:var(--font-display); font-weight:600; font-size:15px;}
+  .mockcard-head .dots{display:flex; gap:6px;}
+  .mockcard-head .dots span{width:8px; height:8px; border-radius:50%; background:var(--line);}
+  table.mock{width:100%; border-collapse:collapse; font-size:13.5px;}
+  table.mock th{text-align:left; font-weight:600; font-size:11px; letter-spacing:0.03em; color:var(--ink-soft); padding:14px 26px; background:var(--paper-alt); text-transform:uppercase;}
+  table.mock td{padding:14px 26px; border-top:1px solid var(--line); font-variant-numeric:tabular-nums;}
+  .pill{display:inline-block; padding:4px 12px; border-radius:100px; font-size:11.5px; font-weight:600;}
+  .pill.al-dia{background:#DFF5F1; color:var(--teal-deep);}
+  .pill.riesgo{background:var(--coral-tint); color:#C04A2E;}
+
+  /* ---------- SECTION HEADS ---------- */
+  .sec-head{max-width:600px; margin-bottom:56px;}
+  .sec-head .label{color:var(--teal-deep); margin-bottom:14px;}
+  .sec-head h2{font-size:32px;}
+  .sec-head p{color:var(--ink-soft); font-size:16.5px; margin-top:14px;}
+
+  /* ---------- PROBLEM ---------- */
+  #problem{background:var(--paper-alt);}
+  .prob-row{display:flex; gap:24px; align-items:flex-start; padding:28px 0; border-top:1px solid var(--line);}
+  .prob-row:last-child{border-bottom:1px solid var(--line);}
+  .prob-dot{width:14px; height:14px; border-radius:50%; margin-top:8px; flex:0 0 auto;}
+  .prob-row h3{font-family:var(--font-display); font-weight:600; font-size:19px; color:var(--ink); margin-bottom:6px;}
+  .prob-row p{color:var(--ink-soft); font-size:15px; max-width:640px;}
+
+  /* ---------- FEATURES ---------- */
+  .feat-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:22px;}
+  .feat-card{background:var(--paper-alt); border-radius:12px; padding:30px;}
+  .feat-icon{width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; margin-bottom:18px;}
+  .feat-card h3{font-family:var(--font-display); font-weight:600; font-size:18px; color:var(--ink); margin-bottom:10px;}
+  .feat-card p{color:var(--ink-soft); font-size:14.5px;}
+
+  /* ---------- HOW IT WORKS ---------- */
+  #how{background:var(--indigo-deep); color:var(--paper);}
+  #how .sec-head .label{color:var(--teal);}
+  #how .sec-head h2{color:var(--paper);}
+  #how .sec-head p{color:#C7C4E8;}
+  .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:28px;}
+  .step-num{width:52px; height:52px; border-radius:50%; background:var(--teal); color:var(--indigo-deep);
+    display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:600; font-size:20px; margin-bottom:20px;}
+  .step h3{font-family:var(--font-display); font-weight:600; font-size:17px; color:var(--paper); margin-bottom:8px;}
+  .step p{color:#C7C4E8; font-size:14px;}
+
+  /* ---------- TRUST STATS ---------- */
+  .stat-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
+  .stat-card{background:var(--indigo-tint); border-radius:12px; padding:32px 28px;}
+  .stat-card .n{font-family:var(--font-display); font-weight:700; font-size:46px; color:var(--indigo);}
+  .stat-card .l{color:var(--ink-soft); font-size:14px; margin-top:8px;}
+
+  /* ---------- PRICING ---------- */
+  #pricing{background:var(--paper);}
+  .price-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; align-items:stretch;}
+  .price-card{
+    background:var(--paper-alt); border-radius:14px; padding:36px 30px;
+    display:flex; flex-direction:column; border:1.5px solid transparent;
+  }
+  .price-card.featured{
+    background:var(--indigo); border-color:var(--indigo);
+  }
+  .price-badge{
+    display:inline-block; align-self:flex-start; font-size:11.5px; font-weight:600;
+    color:var(--teal-deep); background:#DFF5F1; padding:5px 12px; border-radius:100px; margin-bottom:18px;
+  }
+  .price-card.featured .price-badge{background:var(--teal); color:var(--indigo-deep);}
+  .price-card h3{font-family:var(--font-display); font-weight:600; font-size:20px; color:var(--ink); margin-bottom:6px;}
+  .price-card.featured h3{color:var(--paper);}
+  .price-card .who{font-size:13.5px; color:var(--ink-soft); margin-bottom:24px; min-height:36px;}
+  .price-card.featured .who{color:#C7C4E8;}
+  .price-card .amount{display:flex; align-items:baseline; gap:6px; margin-bottom:26px;}
+  .price-card .amount .cur{font-family:var(--font-body); font-weight:600; font-size:16px; color:var(--ink-soft);}
+  .price-card .amount .num{font-family:var(--font-display); font-weight:700; font-size:42px; color:var(--indigo);}
+  .price-card.featured .amount .num{color:var(--paper);}
+  .price-card.featured .amount .cur{color:#C7C4E8;}
+  .price-card .amount .per{font-family:var(--font-body); font-size:14px; color:var(--ink-soft);}
+  .price-card.featured .amount .per{color:#C7C4E8;}
+  .price-card ul{list-style:none; margin-bottom:28px; flex:1;}
+  .price-card li{display:flex; gap:10px; align-items:flex-start; font-size:13.5px; color:var(--ink-soft); margin-bottom:12px; line-height:1.4;}
+  .price-card.featured li{color:#E2E0F5;}
+  .price-card li .tick{color:var(--teal-deep); font-weight:700; flex:0 0 auto;}
+  .price-card.featured li .tick{color:var(--teal);}
+  .price-note{text-align:center; font-size:13px; color:var(--ink-soft); margin-top:32px;}
+
+  /* ---------- OBJECTIVES ---------- */
+  #objectives{background:var(--teal-deep); color:var(--paper);}
+  #objectives .sec-head .label{color:#B7EDE7;}
+  #objectives .sec-head h2{color:var(--paper);}
+  .obj-list{max-width:680px;}
+  .obj-row{display:flex; gap:18px; align-items:flex-start; margin-bottom:26px;}
+  .obj-row .dot{width:10px; height:10px; border-radius:50%; background:var(--coral); margin-top:10px; flex:0 0 auto;}
+  .obj-row p{font-family:var(--font-display); font-weight:500; font-size:19px; line-height:1.4;}
+  .obj-note{margin-top:36px; padding:22px 26px; background:rgba(0,0,0,0.15); border-radius:10px; font-size:14px; font-style:italic; color:#CFEFEB; max-width:680px;}
+
+  /* ---------- DEMO FORM ---------- */
+  #demo{background:var(--paper);}
+  .demo-grid{display:grid; grid-template-columns:0.85fr 1.15fr; gap:56px; align-items:start;}
+  .demo-copy h2{font-size:30px; margin-bottom:16px;}
+  .demo-copy p{color:var(--ink-soft); font-size:16px; margin-bottom:24px; max-width:400px;}
+  .demo-copy ul{list-style:none;}
+  .demo-copy li{display:flex; gap:10px; align-items:center; font-size:14.5px; color:var(--ink-soft); margin-bottom:12px;}
+  .demo-copy li .chk{width:18px; height:18px; border-radius:50%; background:var(--indigo-tint); color:var(--indigo);
+    display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex:0 0 auto;}
+
+  .form-card{background:#fff; border:1px solid var(--line); border-radius:14px; padding:40px; box-shadow:0 20px 50px rgba(38,33,95,0.08);}
+  .field{margin-bottom:20px;}
+  .field label{display:block; font-size:13px; font-weight:600; color:var(--ink); margin-bottom:7px;}
+  .field input, .field textarea{
+    width:100%; padding:12px 14px; border:1.5px solid var(--line); border-radius:8px;
+    font-family:var(--font-body); font-size:14.5px; color:var(--ink); background:var(--paper-alt);
+    outline:none; transition:border-color .15s ease;
+  }
+  .field input:focus, .field textarea:focus{border-color:var(--teal);}
+  .field-row{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  .form-note{font-size:12.5px; color:var(--ink-soft); margin-top:14px; text-align:center;}
+  .form-status{font-size:13.5px; margin-top:14px; display:none;}
+  .form-status.show{display:block;}
+  .form-status.ok{color:var(--teal-deep);}
+
+  /* ---------- FOOTER ---------- */
+  footer{background:var(--indigo); color:var(--paper); padding:64px 0 32px;}
+  .footer-top{display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:40px; margin-bottom:48px;}
+  .footer-brand .wordmark{font-family:var(--font-display); font-weight:600; font-size:20px; color:var(--paper); margin-top:14px;}
+  .footer-brand p{color:#C7C4E8; font-size:13.5px; margin-top:10px; max-width:280px;}
+  .footer-cols{display:flex; gap:64px;}
+  .footer-col h4{font-size:12px; font-weight:600; letter-spacing:0.03em; color:#9C98D6; margin-bottom:14px; text-transform:uppercase;}
+  .footer-col a{display:block; font-size:14px; color:#D9D6F0; margin-bottom:10px;}
+  .footer-col a:hover{color:var(--paper);}
+  .footer-bottom{border-top:1px solid rgba(255,255,255,0.12); padding-top:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;}
+  .footer-bottom p{font-size:12.5px; color:#9C98D6;}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:900px){
+    .hero-grid, .demo-grid{grid-template-columns:1fr;}
+    .feat-grid, .price-grid{grid-template-columns:1fr;}
+    .steps{grid-template-columns:1fr; gap:36px;}
+    .stat-grid{grid-template-columns:1fr; gap:16px;}
+    .nav-actions .btn-ghost{display:none;}
+    header .wrap{position:relative;}
+    .nav-links{
+      display:none; position:absolute; top:100%; left:0; right:0;
+      background:var(--paper); flex-direction:column; align-items:stretch; gap:0;
+      padding:6px 32px 18px; border-top:1px solid var(--line);
+      box-shadow:0 16px 28px rgba(27,26,46,0.1);
+    }
+    .nav-links.open{display:flex;}
+    .nav-links a{padding:14px 2px; border-bottom:1px solid var(--line); font-size:15.5px;}
+    .nav-links a:last-child{border-bottom:none;}
+    .nav-toggle{display:flex;}
+    nav{flex-wrap:nowrap; gap:12px;}
+    .brand{margin-right:0;}
+    .brand .wordmark{font-size:17px;}
+    .nav-actions{gap:14px;}
+    .nav-login{font-size:14px;}
+    section{padding:72px 0;}
+    #hero{padding-top:56px;}
+    .hero-copy h1{font-size:34px;}
+    .field-row{grid-template-columns:1fr;}
+    .footer-cols{gap:36px;}
+  }
+  @media (max-width:520px){
+    .wrap{padding:0 20px;}
+    .hero-copy h1{font-size:29px;}
+    .form-card{padding:26px;}
+    .footer-cols{flex-direction:column; gap:28px;}
+  }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="wrap">
+    <nav>
+      <a href="#hero" class="brand">
+        <svg width="30" height="30" viewBox="6.5 10.5 200 200">
+          <line x1="100" y1="100" x2="42" y2="52" stroke="#17B3A6" stroke-width="7"/>
+          <line x1="100" y1="100" x2="163" y2="46" stroke="#FF6B5E" stroke-width="7"/>
+          <line x1="100" y1="100" x2="172" y2="122" stroke="#8B87CC" stroke-width="7"/>
+          <line x1="100" y1="100" x2="122" y2="176" stroke="#17B3A6" stroke-width="7"/>
+          <line x1="100" y1="100" x2="44" y2="150" stroke="#FF6B5E" stroke-width="7"/>
+          <circle cx="42" cy="52" r="14" fill="#17B3A6"/>
+          <circle cx="163" cy="46" r="12" fill="#FF6B5E"/>
+          <circle cx="172" cy="122" r="13" fill="#8B87CC"/>
+          <circle cx="122" cy="176" r="11" fill="#17B3A6"/>
+          <circle cx="44" cy="150" r="12" fill="#FF6B5E"/>
+          <circle cx="100" cy="100" r="30" fill="#3B36A8"/>
+        </svg>
+        <span class="wordmark">integrapp</span>
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="#product">Producto</a>
+        <a href="#how">Cómo funciona</a>
+        <a href="#pricing">Precios</a>
+        <a href="#objectives">Resultados</a>
+      </div>
+      <div class="nav-actions">
+        <a href="#" id="loginLink" class="nav-login">Iniciar sesión</a>
+        <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="navLinks">
+          <svg id="navToggleIcon" width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <path id="iconBars" d="M3 6h16M3 11h16M3 16h16" stroke="#3B36A8" stroke-width="1.8" stroke-linecap="round"/>
+            <path id="iconClose" d="M5 5l12 12M17 5L5 17" stroke="#3B36A8" stroke-width="1.8" stroke-linecap="round" style="display:none;"/>
+          </svg>
+        </button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section id="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <h1>Gestión administrativa integral para centros terapéuticos</h1>
+      <p>Empadronamiento, documentación, facturación y cobranzas con cada obra social, integrados en una sola plataforma, desarrollada a partir de la normativa vigente y los instructivos oficiales de cada institución.</p>
+      <div class="hero-actions">
+        <a href="#demo" class="btn btn-primary">Solicitar una demostración</a>
+        <a href="#pricing" class="btn btn-ghost">Ver precios</a>
+      </div>
+    </div>
+    <div class="mockcard">
+      <div class="mockcard-head">
+        <span class="t">Cobranzas — este mes</span>
+        <span class="dots"><span></span><span></span><span></span></span>
+      </div>
+      <table class="mock">
+        <tr><th>Obra social</th><th>Factura</th><th>Estado</th></tr>
+        <tr><td>Swiss Medical</td><td>$ 412.500</td><td><span class="pill al-dia">Al día</span></td></tr>
+        <tr><td>OSDE</td><td>$ 268.900</td><td><span class="pill riesgo">Pendiente</span></td></tr>
+        <tr><td>APROSS</td><td>$ 155.200</td><td><span class="pill riesgo">Por vencer</span></td></tr>
+        <tr><td>OSIM</td><td>$ 98.400</td><td><span class="pill al-dia">Al día</span></td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROBLEM ============ -->
+<section id="problem">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="label">EL PROBLEMA</div>
+      <h2>Desafíos frecuentes en la gestión administrativa</h2>
+    </div>
+    <div>
+      <div class="prob-row">
+        <div class="prob-dot" style="background:#FF6B5E;"></div>
+        <div><h3>Documentación incompleta o extraviada</h3><p>Facturas rechazadas por falta de firmas, datos o documentación conforme a los requisitos de cada obra social.</p></div>
+      </div>
+      <div class="prob-row">
+        <div class="prob-dot" style="background:#17B3A6;"></div>
+        <div><h3>Conocimiento operativo concentrado en una sola persona</h3><p>Ausencias, licencias o rotación de personal pueden interrumpir el circuito administrativo del centro.</p></div>
+      </div>
+      <div class="prob-row">
+        <div class="prob-dot" style="background:#3B36A8;"></div>
+        <div><h3>Falta de visibilidad sobre el estado de los cobros</h3><p>Dificultad para determinar, en cualquier momento, qué facturas están cobradas, pendientes o próximas a vencer.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRODUCT / FEATURES ============ -->
+<section id="product">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="label">EL SISTEMA</div>
+      <h2>Una plataforma para ordenar la gestión administrativa</h2>
+      <p>Cuatro áreas centrales, con reglas configurables por obra social, que se adaptan sin necesidad de desarrollo adicional al incorporar nuevas instituciones.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-icon" style="background:#DFF5F1;">
+          <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="#17B3A6"/></svg>
+        </div>
+        <h3>Pacientes y familias</h3>
+        <p>Registro de cada beneficiario junto con su historial y su obra social correspondiente. El Portal Familia permite que los grupos familiares carguen la documentación que les compete, reduciendo la carga administrativa del centro.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:#FFE2DE;">
+          <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="#FF6B5E"/></svg>
+        </div>
+        <h3>Reglas por obra social</h3>
+        <p>Cada institución —Swiss Medical, OSIM, APROSS, OSDE, OMINT— cuenta con requisitos propios, configurados una única vez y aplicados de forma automática en todo el sistema.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:#E4E1F5;">
+          <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="#3B36A8"/></svg>
+        </div>
+        <h3>Documentación y planillas</h3>
+        <p>Los listados de requisitos se generan de forma automática según el tipo de prestación y según corresponda a un alta o a una renovación.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:#DFF5F1;">
+          <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="#0E8478"/></svg>
+        </div>
+        <h3>Facturación y cobranzas</h3>
+        <p>Alertas anticipadas de vencimiento y visibilidad completa sobre el estado de cada factura: cobrada, pendiente o en riesgo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="label">IMPLEMENTACIÓN</div>
+      <h2>Un proceso de incorporación simple</h2>
+      <p>Un proceso breve y sin compromiso, diseñado para que el equipo administrativo del centro pueda evaluar resultados desde la primera reunión.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Reunión inicial</h3>
+        <p>Una conversación de 20 minutos para conocer cómo trabaja el centro actualmente con las obras sociales y qué aspectos representan mayor dificultad.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Demostración personalizada</h3>
+        <p>Presentación del sistema configurado con un caso similar al del centro, no una demostración genérica.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Período de evaluación</h3>
+        <p>Uso del sistema con los propios pacientes y obras sociales del centro, sin necesidad de una decisión previa.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICING ============ -->
+<section id="pricing">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="label">PRECIOS</div>
+      <h2>Un plan para cada tipo de institución</h2>
+      <p>Tres niveles según el alcance del centro. Los valores están expresados en dólares estadounidenses (USD) por mes.</p>
+    </div>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="price-badge">Profesional</div>
+        <h3>Profesional independiente</h3>
+        <div class="who">Para un profesional que atiende de forma individual con una obra social.</div>
+        <div class="amount"><span class="cur">USD</span><span class="num">30</span><span class="per">/ mes</span></div>
+        <ul>
+          <li><span class="tick">✓</span> Un usuario profesional</li>
+          <li><span class="tick">✓</span> Gestión de pacientes y empadronamiento</li>
+          <li><span class="tick">✓</span> Documentación con reglas por obra social</li>
+          <li><span class="tick">✓</span> Facturación y cobranzas individuales</li>
+        </ul>
+      </div>
+      <div class="price-card featured">
+        <div class="price-badge">Centro</div>
+        <h3>Centro terapéutico</h3>
+        <div class="who">Para un centro con un equipo de profesionales en una sola sede.</div>
+        <div class="amount"><span class="cur">USD</span><span class="num">75</span><span class="per">/ mes</span></div>
+        <ul>
+          <li><span class="tick">✓</span> Equipo completo de profesionales</li>
+          <li><span class="tick">✓</span> Portal Familia para carga de documentación</li>
+          <li><span class="tick">✓</span> Dashboard de cobranzas y reportes</li>
+          <li><span class="tick">✓</span> Reglas configurables por obra social</li>
+          <li><span class="tick">✓</span> Soporte prioritario</li>
+        </ul>
+      </div>
+      <div class="price-card">
+        <div class="price-badge">Instituto</div>
+        <h3>Instituto multi-sede</h3>
+        <div class="who">Para instituciones con varias sucursales o sedes.</div>
+        <div class="amount"><span class="cur">USD</span><span class="num">120</span><span class="per">/ mes</span></div>
+        <ul>
+          <li><span class="tick">✓</span> Todo lo incluido en el plan Centro</li>
+          <li><span class="tick">✓</span> Gestión consolidada de varias sedes</li>
+          <li><span class="tick">✓</span> Reportes comparativos entre sedes</li>
+          <li><span class="tick">✓</span> Soporte prioritario y onboarding asistido</li>
+        </ul>
+      </div>
+    </div>
+    <p class="price-note">¿No estás seguro de qué plan corresponde a tu institución? Solicitá una demostración y lo definimos juntos.</p>
+  </div>
+</section>
+
+<!-- ============ OBJECTIVES ============ -->
+<section id="objectives">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="label">BENEFICIOS</div>
+      <h2>Resultados esperados</h2>
+    </div>
+    <div class="obj-list">
+      <div class="obj-row"><div class="dot"></div><p>Visibilidad completa del estado de cobros: facturas cobradas, pendientes y próximas a vencer.</p></div>
+      <div class="obj-row"><div class="dot"></div><p>Reducción de rechazos evitables por documentación incompleta o mal conformada.</p></div>
+      <div class="obj-row"><div class="dot"></div><p>Eliminación de la pérdida de documentación en el circuito de empadronamiento y facturación.</p></div>
+    </div>
+    <div class="obj-note">El sistema no incide sobre los plazos de pago de las obras sociales, ya que estos exceden el control del centro. Sí garantiza el control total de los procesos administrativos que dependen directamente de la institución.</div>
+  </div>
+</section>
+
+<!-- ============ DEMO FORM ============ -->
+<section id="demo">
+  <div class="wrap demo-grid">
+    <div class="demo-copy">
+      <h2>Solicitar una demostración</h2>
+      <p>Complete el formulario y coordinaremos una reunión de 20 minutos, sin costo ni compromiso.</p>
+      <ul>
+        <li><span class="chk">✓</span> Sin costo ni compromiso contractual</li>
+        <li><span class="chk">✓</span> Demostración personalizada según el caso del centro</li>
+        <li><span class="chk">✓</span> Respuesta en menos de 24 horas</li>
+      </ul>
+    </div>
+    <div class="form-card">
+      <form id="demoForm">
+        <div class="field-row">
+          <div class="field">
+            <label for="fname">Nombre y apellido</label>
+            <input type="text" id="fname" required placeholder="Nombre y apellido">
+          </div>
+          <div class="field">
+            <label for="fcenter">Nombre del centro</label>
+            <input type="text" id="fcenter" required placeholder="Nombre del centro">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="femail">Correo electrónico</label>
+            <input type="email" id="femail" required placeholder="nombre@centro.com.ar">
+          </div>
+          <div class="field">
+            <label for="fphone">Teléfono de contacto</label>
+            <input type="tel" id="fphone" required placeholder="+54 9 351 ...">
+          </div>
+        </div>
+        <div class="field">
+          <label for="fmsg">Información adicional (opcional)</label>
+          <textarea id="fmsg" rows="3" placeholder="Indique con qué obras sociales trabaja el centro y qué aspectos representan mayor dificultad en la gestión actual."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Enviar solicitud</button>
+        <div class="form-status" id="formStatus"></div>
+        <p class="form-note">Al enviar el formulario se abrirá WhatsApp con la información completada, para coordinar la demostración.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <svg width="34" height="34" viewBox="6.5 10.5 200 200">
+          <line x1="100" y1="100" x2="42" y2="52" stroke="#17B3A6" stroke-width="7"/>
+          <line x1="100" y1="100" x2="163" y2="46" stroke="#FF6B5E" stroke-width="7"/>
+          <line x1="100" y1="100" x2="172" y2="122" stroke="#8B87CC" stroke-width="7"/>
+          <line x1="100" y1="100" x2="122" y2="176" stroke="#17B3A6" stroke-width="7"/>
+          <line x1="100" y1="100" x2="44" y2="150" stroke="#FF6B5E" stroke-width="7"/>
+          <circle cx="42" cy="52" r="14" fill="#17B3A6"/>
+          <circle cx="163" cy="46" r="12" fill="#FF6B5E"/>
+          <circle cx="172" cy="122" r="13" fill="#8B87CC"/>
+          <circle cx="122" cy="176" r="11" fill="#17B3A6"/>
+          <circle cx="44" cy="150" r="12" fill="#FF6B5E"/>
+          <circle cx="100" cy="100" r="30" fill="#FAF9F6"/>
+        </svg>
+        <div class="wordmark">integrapp</div>
+        <p>Gestión de documentación, empadronamiento, facturación y cobranzas para centros terapéuticos bajo la Ley 24.901.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Producto</h4>
+          <a href="#product">Cómo funciona</a>
+          <a href="#objectives">Resultados</a>
+          <a href="#demo">Solicitar demostración</a>
+        </div>
+        <div class="footer-col">
+          <h4>Cuenta</h4>
+          <a href="#" id="loginLinkFooter">Iniciar sesión</a>
+          <a href="https://instagram.com/integrapp" target="_blank" rel="noopener">Instagram</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Integrapp — Córdoba, Argentina</p>
+      <p>Desarrollado para centros que trabajan bajo el marco de la Ley 24.901</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---- placeholder: reemplazar por la URL real de la app cuando exista login ----
+  const APP_LOGIN_URL = "https://app.integrapp.com.ar/login";
+  document.getElementById("loginLink").href = APP_LOGIN_URL;
+  document.getElementById("loginLinkFooter").href = APP_LOGIN_URL;
+
+  // ---- reemplazar por el WhatsApp real del negocio (con código de país, sin +) ----
+  const WHATSAPP_NUMBER = "5493511234567"; // TODO: reemplazar
+
+  // mobile hamburger menu
+  const navToggle = document.getElementById("navToggle");
+  const navLinks = document.getElementById("navLinks");
+  const iconBars = document.getElementById("iconBars");
+  const iconClose = document.getElementById("iconClose");
+
+  function setMenu(open) {
+    navLinks.classList.toggle("open", open);
+    navToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    iconBars.style.display = open ? "none" : "block";
+    iconClose.style.display = open ? "block" : "none";
+  }
+
+  navToggle.addEventListener("click", () => {
+    setMenu(!navLinks.classList.contains("open"));
+  });
+  navLinks.querySelectorAll("a").forEach((a) => {
+    a.addEventListener("click", () => setMenu(false));
+  });
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 900) setMenu(false);
+  });
+
+  // sticky header shadow on scroll
+  const header = document.getElementById("siteHeader");
+  window.addEventListener("scroll", () => {
+    header.classList.toggle("scrolled", window.scrollY > 8);
+  });
+
+  // demo form -> opens WhatsApp with prefilled message
+  document.getElementById("demoForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const name = document.getElementById("fname").value.trim();
+    const center = document.getElementById("fcenter").value.trim();
+    const email = document.getElementById("femail").value.trim();
+    const phone = document.getElementById("fphone").value.trim();
+    const msg = document.getElementById("fmsg").value.trim();
+
+    const lines = [
+      `Hola, quisiera solicitar una demostración de Integrapp.`,
+      `Nombre: ${name}`,
+      `Centro: ${center}`,
+      `Correo electrónico: ${email}`,
+      `Teléfono de contacto: ${phone}`,
+    ];
+    if (msg) lines.push(`Información adicional: ${msg}`);
+
+    const text = encodeURIComponent(lines.join("\n"));
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
+    window.open(url, "_blank");
+
+    const status = document.getElementById("formStatus");
+    status.textContent = "Se abrió WhatsApp con la información completada. Solo resta enviar el mensaje para coordinar la demostración.";
+    status.classList.add("show", "ok");
+  });
+</script>
+
+</body>
+</html>
